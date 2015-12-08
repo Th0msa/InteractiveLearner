@@ -41,10 +41,10 @@ public class NaiveBayes {
 			String textDocsOfClass = Corpus.ConcatenateAllTextsOfDocsInClass(crps, cls);
 			
 			//for every token t (word) in the vocabulary...
-			List<String> vocabWords = Vocabulary.getWords(currentVocab);
+			List<String> vocabWords = currentVocab.getWords();
 			for (String t : vocabWords) {
 				//amount of occurences of a certain term in the text given a certain class
-				int occurenceCountT = Vocabulary.CountTokensOfTerm(textDocsOfClass, t);
+				int occurenceCountT = currentVocab.CountTokensOfTerm(textDocsOfClass, t);
 				
 				//for every token t' (denoted by tApo) (word) in the vocabulary...
 				for (String tApo : vocabWords) {
@@ -67,8 +67,8 @@ public class NaiveBayes {
 	 */
 	public String ApplyMultinomialNaiveBayes(String document) {
 		String possibleClass = "";
-		Vocabulary documentVocab = Vocabulary.extractTokensFromDoc(currentVocab, document);
-		List<String> documentVocabWords = Vocabulary.getWords(documentVocab);
+		Vocabulary documentVocab = currentVocab.extractTokensFromDoc(document);
+		List<String> documentVocabWords = currentVocab.getWords();
 		Map<String, Double> classTotalScores = new HashMap<String, Double>();
 		
 		//for every class...
@@ -100,7 +100,7 @@ public class NaiveBayes {
 		int denominator = 0;
 		
 		for (String t : vocabWords) {
-			int occurenceCountTApo = Vocabulary.CountTokensOfTerm(textDocsOfClass, t); 
+			int occurenceCountTApo = currentVocab.CountTokensOfTerm(textDocsOfClass, t); 
 			denominator += (occurenceCountTApo + 1);
 		}
 		

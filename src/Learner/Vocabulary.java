@@ -7,19 +7,49 @@ import java.util.List;
  *
  */
 public class Vocabulary {
+	private List<String> vocabWords;
 	
-	public static List<String> getWords(Vocabulary v) {
-		//TODO the vocabulary will probably be a list of words? So returns its list of words
-		return null;
+	public Vocabulary() {
+		
+	}
+	public List<String> getWords() {
+		return vocabWords;
 	}
 	
-	public static int CountTokensOfTerm(String textC, String word) {
-		//TODO counts the amount of appearances of a given word in a text
-		return 0;
+	public void updateVocab(String s) {
+		vocabWords.add(s);
 	}
 	
-	public static Vocabulary extractTokensFromDoc(Vocabulary vocab, String document) {
-		//TODO extracts all the words from the document that are also in the vocabulary
-		return null;
+	public int CountTokensOfTerm(String textC, String word) {
+		//TODO telt nu ook subwoorden van woorden (dus 'en' in 'ben' wordt ook geteld)
+		int count = 0;
+		int index = textC.indexOf(word);
+		while (index != -1) {
+		    count++;
+		    textC = textC.substring(index + 1);
+		    index = textC.indexOf(word);
+		}
+		System.out.println("No of " + word + " in the input is : " + count);
+		return count;
+	}
+	
+	public Vocabulary extractTokensFromDoc(String document) {
+		Vocabulary newVocab = new Vocabulary();
+		int index = 0;
+		String[] split = document.split("\\s+");
+		for(int i = 0; i < split.length; i++) {
+			for (int j = 0; j < vocabWords.size(); i++) {
+				if (split[i].equals(vocabWords.get(j))) {
+					newVocab.updateVocab(split[i]);
+				}
+			}
+		}
+		//TODO waarom doen we dit?
+		return newVocab;
+	}
+	
+	public static void main(String[] args) {
+		Vocabulary v = new Vocabulary();
+		v.CountTokensOfTerm("Hallo ik ben ik en ik ben en ik", "en");
 	}
 }
