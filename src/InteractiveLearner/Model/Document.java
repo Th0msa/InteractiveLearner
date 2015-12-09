@@ -2,12 +2,15 @@ package InteractiveLearner.Model;
 
 import java.io.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Document {
 	private BufferedReader in;
 	private String filePath;
 	private String contents;
 	private String documentClass;
+	private List<String> listContents;
 	
 	public Document(String fileName) {
 		this.filePath = fileName;
@@ -22,6 +25,17 @@ public class Document {
 	
 	public String getDocumentClass() {
 		return this.documentClass;
+	}
+	
+	public List<String> getListContents() {
+		return this.listContents;
+	}
+	
+	public void updateListContents(String s) {
+		String[] words = s.split("\\s+");
+		for (int i = 0; i < words.length; i++) {
+			listContents.add(words[i]);
+		}
 	}
 	
 	public void readFile(String filename) {

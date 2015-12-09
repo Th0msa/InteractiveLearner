@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import InteractiveLearner.Model.Document;
+
 public class NaiveBayes {
 	
 	private List<String> categories;
@@ -25,7 +27,7 @@ public class NaiveBayes {
 	 */
 	public void TrainMultinomialNaiveBayes() {
 		//extract the whole vocabulary from the corpus
-		currentVocab = Corpus.extractVocabulary(crps);
+		currentVocab  = crps.extractVocabulary();
 		
 		//count the total number of documents in the corpus
 		int noDocsTotal = crps.countNumberOfDocs();

@@ -18,6 +18,7 @@ public class Corpus {
 	
 	private List<Document> allDocuments;
 	private List<String> categories;
+	private Vocabulary vocabulary;
 	
 	public Corpus(String path) {
 		this.allDocuments = new ArrayList<Document>();
