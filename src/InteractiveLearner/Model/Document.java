@@ -18,8 +18,8 @@ public class Document {
 		this.listContents = new ArrayList<String>();
 		this.contents = "";
 		if (isTrainingData) {
-			String temp = fileName.replaceAll("[^a-zA-Z]+","");
-			this.documentClass = temp.substring(temp.length() - 9);
+			String[] temp = fileName.split("\\\\");
+			this.documentClass = temp[temp.length - 2];
 		} else {
 			//TODO voor het interactive learning gedeelte, niet de classifier
 			this.documentClass = "";
