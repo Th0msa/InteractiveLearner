@@ -17,20 +17,26 @@ import InteractiveLearner.Model.Document;
 public class Corpus {
 	
 	private List<Document> allDocuments;
+	private List<String> categories;
 	
 	public Corpus(String path) {
 		this.allDocuments = new ArrayList<Document>();
 		
 		try {
 			Files.walk(Paths.get(path)).forEach(filePath -> {
-			    if (Files.isRegularFile(filePath)) {
-			        allDocuments.add(new Document(filePath.toString()));
+			    if (Files.isRegularFile(filePath)) {	
+			        Document tempD = new Document(filePath.toString());
+			        this.addCategory(tempD.getDocumentClass());
+			    	allDocuments.add(tempD);
 			    }
 			});
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public List<String> getCategories() {
+		return this.categories;
 	}
 	
 	public List<Document> getDocuments() {
@@ -42,26 +48,30 @@ public class Corpus {
 		return null;
 	}
 	
-	public static int countNumberOfDocs(Corpus crps) {
-		return 0;
+	public int countNumberOfDocs() {
+		return this.allDocuments.size();
 	}
 	
-	public static int countDocsInClass(Corpus crps, String cls) {
-		return 0;
+	public int countDocsInClass(String cls) {
+		int docCount = 0;
+		
+		for (Document d : this.allDocuments) {
+			if (d.getDocumentClass().equals(cls)) {
+				docCount++;
+			}
+		}
+		
+		return docCount;
 	}
 	
 	public static String ConcatenateAllTextsOfDocsInClass(Corpus crps, String cls) {
 		return null;
 	}
 	
-//	public static void main(String[] args) {
-//		Corpus c =  new Corpus("C:/Users/wessel/Documents/School/2015-2016"
-//				+ "/Module 6 - Intelligent Interaction Design/Artificial Intelligence"
-//				+ "/Interactive Learner/corpus/part1");
-//		int i = 0;
-//		for (Document d : c.getDocuments()) {
-//			i++;
-//			System.out.println(i + " " + d.getContents());
-//		}
-//	}
+	public void addCategory(String newCategory) {
+		if (!this.categories.contains(newCategory)) {
+			this.categories.add(newCategory);
+		}
+	}
+
 }

@@ -7,15 +7,21 @@ public class Document {
 	private BufferedReader in;
 	private String filePath;
 	private String contents;
+	private String documentClass;
 	
 	public Document(String fileName) {
 		this.filePath = fileName;
 		this.contents = "";
-		this.readFile(filePath); 
+		this.documentClass = fileName.replaceAll("[^a-zA-Z]+","");
+		this.readFile(filePath);	
 	}
 	
 	public String getContents() {
 		return this.contents;
+	}
+	
+	public String getDocumentClass() {
+		return this.documentClass;
 	}
 	
 	public void readFile(String filename) {

@@ -10,9 +10,11 @@ public class NaiveBayes {
 	private Map<String, Double> priorClassProbabilities;
 	private Map<Tuple<String, String>, Double> condProbPerClassPerWord;
 	private Vocabulary currentVocab;
+	private Corpus crps;
 	
-	public NaiveBayes(List<String> categories) {
-		this.categories = categories;
+	public NaiveBayes(String corpusFolderPath) {
+		this.crps = new Corpus(corpusFolderPath);
+		this.categories = this.crps.getCategories();
 		this.priorClassProbabilities = new HashMap<String, Double>();
 		this.currentVocab = new Vocabulary();
 	}
@@ -21,17 +23,17 @@ public class NaiveBayes {
 	 * trains the classifier with a corpus of documents and a list of possible categories
 	 * @param crps labeled corpus of documents such that every document in the corpus is assigned one of the categories 
 	 */
-	public void TrainMultinomialNaiveBayes(Corpus crps) {
+	public void TrainMultinomialNaiveBayes() {
 		//extract the whole vocabulary from the corpus
-		currentVocab  = Corpus.extractVocabulary(crps);
+		currentVocab = Corpus.extractVocabulary(crps);
 		
 		//count the total number of documents in the corpus
-		int noDocsTotal = Corpus.countNumberOfDocs(crps);
+		int noDocsTotal = crps.countNumberOfDocs();
 		
 		//for every class...
 		for (String cls: categories) {
 			//count the number of documents in the corpus for a certain class
-			double noDocsClass = Corpus.countDocsInClass(crps, cls);
+			double noDocsClass = crps.countDocsInClass(cls);
 			
 			//determine what the priority of the class is
 			double priorProbOfClass = noDocsClass / noDocsTotal;
