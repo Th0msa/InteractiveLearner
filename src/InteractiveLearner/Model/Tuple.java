@@ -1,4 +1,4 @@
-package Learner;
+package InteractiveLearner.Model;
 
 public class Tuple<X, Y> { 
 	private X x; 

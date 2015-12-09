@@ -1,9 +1,7 @@
-package Learner;
+package InteractiveLearner.Model;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import InteractiveLearner.Model.Document;
 /**
  * a looooong list of words without multiple occurances of a single word
  * @author wessel
