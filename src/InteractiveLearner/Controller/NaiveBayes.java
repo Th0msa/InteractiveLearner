@@ -94,9 +94,8 @@ public class NaiveBayes {
 			
 			classTotalScores.put(cls, classScore);
 		}
-		System.out.println(classTotalScores);
 		possibleClass = this.calculateMaxScore(classTotalScores);
-		
+		System.out.println(classTotalScores);
 		return possibleClass;
 	}
 	
@@ -137,13 +136,29 @@ public class NaiveBayes {
 	}
 	
 	public static void main(String[] args) {
-		NaiveBayes bayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
-		bayes.TrainMultinomialNaiveBayes();
+		System.out.println("~~~~~~MAIL~~~~~~");
+		NaiveBayes bayesMail = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
+		bayesMail.TrainMultinomialNaiveBayes();
 		try {
 			Files.walk(Paths.get("../InteractiveLearner/TestFiles/mail")).forEach(filePath -> {
 				if (Files.isRegularFile(filePath)) {
 			    	Document d = new Document(filePath.toString(), false);
-			    	System.out.println(bayes.ApplyMultinomialNaiveBayes(d) + "\n");
+					String[] temp = filePath.toString().split("\\\\");
+			    	System.out.println("Class " + temp[temp.length - 2] + " is classified as: " + bayesMail.ApplyMultinomialNaiveBayes(d) + "\n");
+			    }
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("~~~~~~BLOGS~~~~~~");
+		NaiveBayes bayesBlogs = new NaiveBayes("../InteractiveLearner/TrainingFiles/blogs");
+		bayesBlogs.TrainMultinomialNaiveBayes();
+		try {
+			Files.walk(Paths.get("../InteractiveLearner/TestFiles/blogs")).forEach(filePath -> {
+				if (Files.isRegularFile(filePath)) {
+			    	Document d = new Document(filePath.toString(), false);
+					String[] temp = filePath.toString().split("\\\\");
+			    	System.out.println("Class " + temp[temp.length - 2] + " is classified as: " + bayesBlogs.ApplyMultinomialNaiveBayes(d) + "\n");
 			    }
 			});
 		} catch (IOException e) {
