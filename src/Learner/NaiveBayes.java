@@ -55,18 +55,14 @@ public class NaiveBayes {
 			//for every token t (word) in the vocabulary...
 			for (String t : currentVocab.getWords()) {
 				//amount of occurences of a certain term in the text given a certain class
-				int occurenceCountT = currentVocab.CountTokensOfTerm(textDocsOfClass, t);
-				
+				double occurenceCountT = currentVocab.CountTokensOfTerm(textDocsOfClass, t);
 				//calculate conditional probability
 				double condProb = (occurenceCountT + 1) / denominator;
-				
 				//store the combination of class and token with conditional probability
 				Tuple<String, String> classTokenCombi = new Tuple<String, String>(category, t);
 				this.condProbPerClassPerWord.put(classTokenCombi, condProb);
 			}
 		}
-		
-		System.out.println(this.priorClassProbabilities);
 	}
 	
 	/**
@@ -82,20 +78,17 @@ public class NaiveBayes {
 		//for every class...
 		for (String cls : categories) {
 			//retrieve the prior probability for the class 
-			double classScore = Math.log(this.priorClassProbabilities.get(cls));
-			
-			System.out.println("pre" + classScore);
+			double classScore = this.priorClassProbabilities.get(cls);
 			
 			//for every token in the documents vocabulary
 			for (String t : documentVocab) {
-				classScore += Math.log(this.condProbPerClassPerWord.get(
-						new Tuple<String, String>(cls, t)));
-				System.out.println("post" + classScore);
+				classScore += this.condProbPerClassPerWord.get(
+						new Tuple<String, String>(cls, t));
 			}
 			
 			classTotalScores.put(cls, classScore);
 		}
-		
+
 		possibleClass = this.calculateMaxScore(classTotalScores);
 		
 		return possibleClass;
@@ -127,9 +120,9 @@ public class NaiveBayes {
 	private String calculateMaxScore(Map<String, Double> scoreMap) {
 		String maxScoreClass = "";
 		double currentMax = 0;
-		
 		for (String cls : scoreMap.keySet()) {
 			if (scoreMap.get(cls) > currentMax) {
+				currentMax = scoreMap.get(cls);
 				maxScoreClass = cls;
 			}
 		}
@@ -141,6 +134,6 @@ public class NaiveBayes {
 		NaiveBayes bayes = new NaiveBayes("C:/Users/wessel/Documents/School/2015-2016/Module 6 - Intelligent Interaction Design/Artificial Intelligence/Interactive Learner/corpus/part1");
 		bayes.TrainMultinomialNaiveBayes();
 		Document d = new Document("testFile.txt", false);
-		bayes.ApplyMultinomialNaiveBayes(d);
+		System.out.println(bayes.ApplyMultinomialNaiveBayes(d));
 	}
 }

@@ -18,12 +18,14 @@ public class Document {
 		this.listContents = new ArrayList<String>();
 		this.contents = "";
 		if (isTrainingData) {
-			this.documentClass = fileName.replaceAll("[^a-zA-Z]+","");
+			String temp = fileName.replaceAll("[^a-zA-Z]+","");
+			this.documentClass = temp.substring(temp.length() - 5);
 		} else {
 			//TODO voor het interactive learning gedeelte, niet de classifier
 			this.documentClass = "";
 		}
-		this.readFile(filePath);	
+		this.readFile(filePath);
+		this.updateListContents(contents);
 	}
 	
 	public String getContents() {
@@ -59,4 +61,5 @@ public class Document {
 			e1.printStackTrace();
 		}
 	}
+
 }

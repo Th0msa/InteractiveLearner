@@ -47,7 +47,6 @@ public class Corpus {
 	}
 	
 	public Vocabulary extractVocabulary() {
-		//TODO extracts all the words from a corpus and adds them in a vocabulary
 		for(Document d : this.getDocuments()) {
 			vocabulary.extractTokensFromDoc(d);
 		}
@@ -78,7 +77,6 @@ public class Corpus {
 				allWordsOfCategory.addAll(d.getListContents());
 			}
 		}
-		
 		return allWordsOfCategory;
 	}
 	
