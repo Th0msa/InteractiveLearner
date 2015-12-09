@@ -1,8 +1,5 @@
 package InteractiveLearner.Controller;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,6 +131,13 @@ public class NaiveBayes {
 		}
 		
 		return maxScoreClass;
+	}
+	
+	public static void main(String[] args) {
+		NaiveBayes bayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/");
+		bayes.TrainMultinomialNaiveBayes();
+		Document d = new Document("M-test28.txt", false);
+		System.out.println(bayes.ApplyMultinomialNaiveBayes(d));
 	}
 
 }
