@@ -1,5 +1,8 @@
 package InteractiveLearner.Controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,9 +137,17 @@ public class NaiveBayes {
 	}
 	
 	public static void main(String[] args) {
-		NaiveBayes bayes = new NaiveBayes("C:/Users/wessel/Documents/School/2015-2016/Module 6 - Intelligent Interaction Design/Artificial Intelligence/Interactive Learner/corpus/part1");
+		NaiveBayes bayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
 		bayes.TrainMultinomialNaiveBayes();
-		Document d = new Document("testFile.txt", false);
-		System.out.println(bayes.ApplyMultinomialNaiveBayes(d));
+		try {
+			Files.walk(Paths.get("../InteractiveLearner/TestFiles/mail")).forEach(filePath -> {
+				if (Files.isRegularFile(filePath)) {
+			    	Document d = new Document(filePath.toString(), false);
+			    	System.out.println(bayes.ApplyMultinomialNaiveBayes(d));
+			    }
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
