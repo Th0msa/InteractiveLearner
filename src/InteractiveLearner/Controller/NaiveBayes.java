@@ -32,6 +32,7 @@ public class NaiveBayes {
 	 * trains the classifier with a corpus of documents and a list of possible categories
 	 */
 	public void TrainMultinomialNaiveBayes() {
+		
 		//extract the whole vocabulary from the corpus
 		currentVocab = crps.extractVocabulary();
 		
@@ -53,11 +54,10 @@ public class NaiveBayes {
 			boolean denomCalculated = false;
 			int denominator = -1;
 			
-			if (!denomCalculated) {
+			if(!denomCalculated) {
 				denominator = calcDenominator(textDocsOfClass);
 				denomCalculated = true;
 			}
-			
 			//for every token t (word) in the vocabulary...
 			for (String t : currentVocab.getWords()) {
 				//amount of occurences of a certain term in the text given a certain class
@@ -66,7 +66,7 @@ public class NaiveBayes {
 				double condProb = (occurenceCountT + 1) / denominator;
 				//store the combination of class and token with conditional probability
 				Tuple<String, String> classTokenCombi = new Tuple<String, String>(category, t);
-				this.condProbPerClassPerWord.put(classTokenCombi, condProb);
+				condProbPerClassPerWord.put(classTokenCombi, condProb);
 			}
 		}
 	}
@@ -94,7 +94,7 @@ public class NaiveBayes {
 			
 			classTotalScores.put(cls, classScore);
 		}
-
+		System.out.println(classTotalScores);
 		possibleClass = this.calculateMaxScore(classTotalScores);
 		
 		return possibleClass;
@@ -135,19 +135,5 @@ public class NaiveBayes {
 		
 		return maxScoreClass;
 	}
-	
-	public static void main(String[] args) {
-		NaiveBayes bayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
-		bayes.TrainMultinomialNaiveBayes();
-		try {
-			Files.walk(Paths.get("../InteractiveLearner/TestFiles/mail")).forEach(filePath -> {
-				if (Files.isRegularFile(filePath)) {
-			    	Document d = new Document(filePath.toString(), false);
-			    	System.out.println(bayes.ApplyMultinomialNaiveBayes(d));
-			    }
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+
 }
