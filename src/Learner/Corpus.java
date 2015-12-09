@@ -17,8 +17,10 @@ import InteractiveLearner.Model.Document;
 public class Corpus {
 	
 	private List<Document> allDocuments;
+	private Vocabulary vocabulary;
 	
 	public Corpus(String path) {
+		vocabulary = new Vocabulary();
 		this.allDocuments = new ArrayList<Document>();
 		
 		try {
@@ -37,20 +39,23 @@ public class Corpus {
 		return this.allDocuments;
 	}
 	
-	public static Vocabulary extractVocabulary(Corpus crps) {
-		//TODO extracts all the words from a corpus and adds them in a library
-		return null;
+	public Vocabulary extractVocabulary() {
+		//TODO extracts all the words from a corpus and adds them in a vocabulary
+		for(Document d : this.getDocuments()) {
+			vocabulary.extractTokensFromDoc(d);
+		}
+		return vocabulary;
 	}
 	
-	public static int countNumberOfDocs(Corpus crps) {
+	public int countNumberOfDocs() {
 		return 0;
 	}
 	
-	public static int countDocsInClass(Corpus crps, String cls) {
+	public int countDocsInClass(String cls) {
 		return 0;
 	}
 	
-	public static String ConcatenateAllTextsOfDocsInClass(Corpus crps, String cls) {
+	public String ConcatenateAllTextsOfDocsInClass(String cls) {
 		return null;
 	}
 	
