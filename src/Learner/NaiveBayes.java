@@ -9,59 +9,64 @@ import InteractiveLearner.Model.Document;
 public class NaiveBayes {
 	
 	private List<String> categories;
-	private Map<String, Double> priorClassProbabilities;
-	private Map<Tuple<String, String>, Double> condProbPerClassPerWord;
-	private Vocabulary currentVocab;
+	private Map<String, Double> priorClassProbabilities; //prior in psuedo
+	private Map<Tuple<String, String>, Double> condProbPerClassPerWord; //condprob in psuedo
+	private Vocabulary currentVocab; //V in psuedo
 	private Corpus crps;
 	
 	public NaiveBayes(String corpusFolderPath) {
 		this.crps = new Corpus(corpusFolderPath);
 		this.categories = this.crps.getCategories();
 		this.priorClassProbabilities = new HashMap<String, Double>();
+		this.condProbPerClassPerWord = new HashMap<Tuple<String, String>, Double>();
 		this.currentVocab = new Vocabulary();
 	}
 	
 	/**
 	 * trains the classifier with a corpus of documents and a list of possible categories
-	 * @param crps labeled corpus of documents such that every document in the corpus is assigned one of the categories 
 	 */
 	public void TrainMultinomialNaiveBayes() {
 		//extract the whole vocabulary from the corpus
-		currentVocab  = crps.extractVocabulary();
+		currentVocab = crps.extractVocabulary();
 		
 		//count the total number of documents in the corpus
 		int noDocsTotal = crps.countNumberOfDocs();
 		
 		//for every class...
-		for (String cls: categories) {
+		for (String category: categories) {
 			//count the number of documents in the corpus for a certain class
-			double noDocsClass = crps.countDocsInClass(cls);
+			double noDocsClass = crps.countDocsInClass(category);
 			
 			//determine what the priority of the class is
-			double priorProbOfClass = noDocsClass / noDocsTotal;
-			this.priorClassProbabilities.put(cls, priorProbOfClass);
+			double priorProbOfCategory = noDocsClass / noDocsTotal;
+			this.priorClassProbabilities.put(category, priorProbOfCategory);
 			
 			//concatenate all the text of the documents in the corpus for a certain class
-			String textDocsOfClass = Corpus.ConcatenateAllTextsOfDocsInClass(crps, cls);
+			List<String> textDocsOfClass = crps.ConcatenateAllTextsOfDocsInClass(category);
+			
+			boolean denomCalculated = false;
+			int denominator = -1;
+			
+			if (!denomCalculated) {
+				denominator = calcDenominator(textDocsOfClass);
+				denomCalculated = true;
+			}
 			
 			//for every token t (word) in the vocabulary...
-			List<String> vocabWords = currentVocab.getWords();
-			for (String t : vocabWords) {
+			for (String t : currentVocab.getWords()) {
 				//amount of occurences of a certain term in the text given a certain class
 				int occurenceCountT = currentVocab.CountTokensOfTerm(textDocsOfClass, t);
 				
-				//for every token t' (denoted by tApo) (word) in the vocabulary...
-				for (String tApo : vocabWords) {
-					//calculate conditional probability
-					//TODO the calculation of the denominator should only be once per class
-					double condProb = (occurenceCountT + 1) / calcDenominator(vocabWords, textDocsOfClass);
-					
-					//store the combination of class and token with conditional probability
-					Tuple<String, String> classTokenCombi = new Tuple<String, String>(cls, tApo);
-					this.condProbPerClassPerWord.put(classTokenCombi, condProb);
-				}
+				//calculate conditional probability
+				double condProb = (occurenceCountT + 1) / denominator;
+				
+				//store the combination of class and token with conditional probability
+				Tuple<String, String> classTokenCombi = new Tuple<String, String>(category, t);
+				this.condProbPerClassPerWord.put(classTokenCombi, condProb);
 			}
 		}
+		
+		System.out.println(this.priorClassProbabilities);
 	}
 	
 	/**
@@ -79,16 +84,20 @@ public class NaiveBayes {
 			//retrieve the prior probability for the class 
 			double classScore = Math.log(this.priorClassProbabilities.get(cls));
 			
+			System.out.println("pre" + classScore);
+			
 			//for every token in the documents vocabulary
 			for (String t : documentVocab) {
 				classScore += Math.log(this.condProbPerClassPerWord.get(
 						new Tuple<String, String>(cls, t)));
+				System.out.println("post" + classScore);
 			}
 			
 			classTotalScores.put(cls, classScore);
 		}
 		
 		possibleClass = this.calculateMaxScore(classTotalScores);
+		
 		return possibleClass;
 	}
 	
@@ -99,11 +108,11 @@ public class NaiveBayes {
 	 * @param textDocsOfClass all text that has to do with a certain class
 	 * @return the denominator
 	 */
-	private int calcDenominator(List<String> vocabWords, String textDocsOfClass) {
+	private int calcDenominator(List<String> textDocsOfClass) {
 		int denominator = 0;
 		
-		for (String t : vocabWords) {
-			int occurenceCountTApo = currentVocab.CountTokensOfTerm(textDocsOfClass, t); 
+		for (String tApo : currentVocab.getWords()) {
+			int occurenceCountTApo = currentVocab.CountTokensOfTerm(textDocsOfClass, tApo); 
 			denominator += (occurenceCountTApo + 1);
 		}
 		
@@ -117,7 +126,7 @@ public class NaiveBayes {
 	 */
 	private String calculateMaxScore(Map<String, Double> scoreMap) {
 		String maxScoreClass = "";
-		double currentMax= 0;
+		double currentMax = 0;
 		
 		for (String cls : scoreMap.keySet()) {
 			if (scoreMap.get(cls) > currentMax) {
@@ -127,5 +136,11 @@ public class NaiveBayes {
 		
 		return maxScoreClass;
 	}
-
+	
+	public static void main(String[] args) {
+		NaiveBayes bayes = new NaiveBayes("C:/Users/wessel/Documents/School/2015-2016/Module 6 - Intelligent Interaction Design/Artificial Intelligence/Interactive Learner/corpus/part1");
+		bayes.TrainMultinomialNaiveBayes();
+		Document d = new Document("testFile.txt", false);
+		bayes.ApplyMultinomialNaiveBayes(d);
+	}
 }

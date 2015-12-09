@@ -22,11 +22,13 @@ public class Corpus {
 	
 	public Corpus(String path) {
 		this.allDocuments = new ArrayList<Document>();
+		this.categories = new ArrayList<String>();
+		this.vocabulary = new Vocabulary();
 		
 		try {
 			Files.walk(Paths.get(path)).forEach(filePath -> {
 			    if (Files.isRegularFile(filePath)) {	
-			        Document tempD = new Document(filePath.toString());
+			        Document tempD = new Document(filePath.toString(), true);
 			        this.addCategory(tempD.getDocumentClass());
 			    	allDocuments.add(tempD);
 			    }
@@ -68,8 +70,16 @@ public class Corpus {
 		return docCount;
 	}
 	
-	public static String ConcatenateAllTextsOfDocsInClass(Corpus crps, String cls) {
-		return null;
+	public List<String> ConcatenateAllTextsOfDocsInClass(String category) {
+		List<String> allWordsOfCategory = new ArrayList<String>();
+		
+		for (Document d : this.allDocuments) {
+			if (d.getDocumentClass().equals(category)) {
+				allWordsOfCategory.addAll(d.getListContents());
+			}
+		}
+		
+		return allWordsOfCategory;
 	}
 	
 	public void addCategory(String newCategory) {

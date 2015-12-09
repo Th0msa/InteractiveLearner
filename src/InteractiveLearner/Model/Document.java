@@ -1,6 +1,7 @@
 package InteractiveLearner.Model;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,16 @@ public class Document {
 	private String documentClass;
 	private List<String> listContents;
 	
-	public Document(String fileName) {
+	public Document(String fileName, boolean isTrainingData) {
 		this.filePath = fileName;
+		this.listContents = new ArrayList<String>();
 		this.contents = "";
-		this.documentClass = fileName.replaceAll("[^a-zA-Z]+","");
+		if (isTrainingData) {
+			this.documentClass = fileName.replaceAll("[^a-zA-Z]+","");
+		} else {
+			//TODO voor het interactive learning gedeelte, niet de classifier
+			this.documentClass = "";
+		}
 		this.readFile(filePath);	
 	}
 	

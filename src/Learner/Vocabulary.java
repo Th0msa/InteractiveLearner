@@ -23,15 +23,13 @@ public class Vocabulary {
 		vocabWords.add(s);
 	}
 	
-	public int CountTokensOfTerm(String textC, String word) {
+	public int CountTokensOfTerm(List<String> textC, String word) {
 		int count = 0;
-		String[] split = textC.split("\\s+");
-		for (int i = 0; i < split.length; i++) {
-			if (split[i].equals(word)) {
+		for (String t : textC) {
+			if (t.equals(word)) {
 				count++;
 			}
 		}
-		System.out.println("No of " + word + " in the input is : " + count);
 		return count;
 	}
 	
@@ -56,11 +54,5 @@ public class Vocabulary {
 		}
 		return list;
 	}
-	
-	public static void main(String[] args) {
-		Vocabulary v = new Vocabulary();
-		v.updateVocab("Hallo");
-		v.updateVocab("ben");
-		v.CountTokensOfTerm("Hallo ik ben ik en ik ben en ik", "en");
-	}
+
 }
