@@ -69,10 +69,9 @@ public class NaiveBayes {
 	 * @param document the document that will be classified
 	 * @return the determined class of the document
 	 */
-	public String ApplyMultinomialNaiveBayes(String document) {
+	public String ApplyMultinomialNaiveBayes(Document document) {
 		String possibleClass = "";
-		Vocabulary documentVocab = currentVocab.extractTokensFromDoc(document);
-		List<String> documentVocabWords = currentVocab.getWords();
+		List<String> documentVocab = currentVocab.extractTokensInVocFromDoc(document);
 		Map<String, Double> classTotalScores = new HashMap<String, Double>();
 		
 		//for every class...
@@ -81,7 +80,7 @@ public class NaiveBayes {
 			double classScore = Math.log(this.priorClassProbabilities.get(cls));
 			
 			//for every token in the documents vocabulary
-			for (String t : documentVocabWords) {
+			for (String t : documentVocab) {
 				classScore += Math.log(this.condProbPerClassPerWord.get(
 						new Tuple<String, String>(cls, t)));
 			}

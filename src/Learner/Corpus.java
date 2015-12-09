@@ -44,9 +44,12 @@ public class Corpus {
 		return this.allDocuments;
 	}
 	
-	public static Vocabulary extractVocabulary(Corpus crps) {
-		//TODO extracts all the words from a corpus and adds them in a library
-		return null;
+	public Vocabulary extractVocabulary() {
+		//TODO extracts all the words from a corpus and adds them in a vocabulary
+		for(Document d : this.getDocuments()) {
+			vocabulary.extractTokensFromDoc(d);
+		}
+		return vocabulary;
 	}
 	
 	public int countNumberOfDocs() {

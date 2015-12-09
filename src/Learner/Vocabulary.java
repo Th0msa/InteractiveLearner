@@ -44,6 +44,19 @@ public class Vocabulary {
 		}
 	}
 	
+	public List<String> extractTokensInVocFromDoc(Document document) {
+		List<String> list = new ArrayList<String>();
+		String[] split = document.getContents().split("\\s+");
+		for (int i = 0; i < split.length; i++) {
+			if (!list.contains(split[i])) {
+				if (vocabWords.contains(split[i])) {	
+					list.add(split[i]);
+				}
+			}
+		}
+		return list;
+	}
+	
 	public static void main(String[] args) {
 		Vocabulary v = new Vocabulary();
 		v.updateVocab("Hallo");
