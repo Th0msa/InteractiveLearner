@@ -9,9 +9,14 @@ import java.util.List;
  */
 public class Vocabulary {
 	private List<String> vocabWords;
+	private List<String> standardTokens = new ArrayList<String>();
 	
 	public Vocabulary() {
 		vocabWords = new ArrayList<String>();
+		standardTokens.add("it");
+		standardTokens.add("and");
+		standardTokens.add("is");
+		standardTokens.add("I");
 	}
 	public List<String> getWords() {
 		return vocabWords;
@@ -34,8 +39,10 @@ public class Vocabulary {
 	public void extractTokensFromDoc(Document document) {
 		String[] split = document.getContents().split("\\s+");
 		for (int i = 0; i < split.length; i++) {
-			if (!vocabWords.contains(split[i])) {
-				this.updateVocab(split[i]);
+			if (!standardTokens.contains(split[i])) {
+				if (!vocabWords.contains(split[i])) {
+					this.updateVocab(split[i]);
+				}
 			}
 		}
 	}
