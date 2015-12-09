@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import InteractiveLearner.Model.Document;
+
 public class NaiveBayes {
 	
 	private List<String> categories;
@@ -23,22 +25,22 @@ public class NaiveBayes {
 	 */
 	public void TrainMultinomialNaiveBayes(Corpus crps) {
 		//extract the whole vocabulary from the corpus
-		currentVocab  = Corpus.extractVocabulary(crps);
+		currentVocab  = crps.extractVocabulary();
 		
 		//count the total number of documents in the corpus
-		int noDocsTotal = Corpus.countNumberOfDocs(crps);
+		int noDocsTotal = crps.countNumberOfDocs();
 		
 		//for every class...
 		for (String cls: categories) {
 			//count the number of documents in the corpus for a certain class
-			double noDocsClass = Corpus.countDocsInClass(crps, cls);
+			double noDocsClass = crps.countDocsInClass(cls);
 			
 			//determine what the priority of the class is
 			double priorProbOfClass = noDocsClass / noDocsTotal;
 			this.priorClassProbabilities.put(cls, priorProbOfClass);
 			
 			//concatenate all the text of the documents in the corpus for a certain class
-			String textDocsOfClass = Corpus.ConcatenateAllTextsOfDocsInClass(crps, cls);
+			String textDocsOfClass = crps.ConcatenateAllTextsOfDocsInClass(cls);
 			
 			//for every token t (word) in the vocabulary...
 			List<String> vocabWords = currentVocab.getWords();
@@ -65,10 +67,9 @@ public class NaiveBayes {
 	 * @param document the document that will be classified
 	 * @return the determined class of the document
 	 */
-	public String ApplyMultinomialNaiveBayes(String document) {
+	public String ApplyMultinomialNaiveBayes(Document document) {
 		String possibleClass = "";
-		Vocabulary documentVocab = currentVocab.extractTokensFromDoc(document);
-		List<String> documentVocabWords = currentVocab.getWords();
+		List<String> documentVocabWords = document.getListContents();
 		Map<String, Double> classTotalScores = new HashMap<String, Double>();
 		
 		//for every class...
