@@ -1,11 +1,15 @@
 package InteractiveLearner.Controller;
 
+import InteractiveLearner.View.GUI;
+
 public class Controller implements Runnable{
 	private Thread thread;
 	private NaiveBayes bayes;
 	private boolean running = false;
+	private GUI gui;
 	
 	public Controller() {
+		gui = new GUI();
 		this.thread = new Thread(this);
 		thread.start();
 	}
@@ -13,7 +17,6 @@ public class Controller implements Runnable{
 	@Override
 	public void run() {
 		while (running) {
-			
 		}
 		this.stop();
 	}
@@ -21,7 +24,14 @@ public class Controller implements Runnable{
 	public synchronized void start() {
         if(!running) {
             running = true;
-            this.run();
+            System.out.println("running");
+            bayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
+            System.out.println("training");
+            bayes.TrainMultinomialNaiveBayes();
+            System.out.println("trained");
+            gui.addnaivebayes(bayes);
+            gui.update();
+            //this.run();
         }
     }
 	

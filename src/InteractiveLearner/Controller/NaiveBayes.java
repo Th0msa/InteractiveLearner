@@ -135,6 +135,11 @@ public class NaiveBayes {
 		return maxScoreClass;
 	}
 	
+	public void updateCorpus(Corpus c) {
+		this.crps = c;
+	}
+	
+	/**
 	public static void main(String[] args) {
 		System.out.println("~~~~~~MAIL~~~~~~");
 		NaiveBayes bayesMail = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
@@ -142,7 +147,7 @@ public class NaiveBayes {
 		try {
 			Files.walk(Paths.get("../InteractiveLearner/TestFiles/mail")).forEach(filePath -> {
 				if (Files.isRegularFile(filePath)) {
-			    	Document d = new Document(filePath.toString(), false);
+			    	Document d = new Document(filePath.toString(), false, false);
 					String[] temp = filePath.toString().split("\\\\");
 			    	System.out.println("Class " + temp[temp.length - 2] + " is classified as: " + bayesMail.ApplyMultinomialNaiveBayes(d) + "\n");
 			    }
@@ -156,7 +161,7 @@ public class NaiveBayes {
 		try {
 			Files.walk(Paths.get("../InteractiveLearner/TestFiles/blogs")).forEach(filePath -> {
 				if (Files.isRegularFile(filePath)) {
-			    	Document d = new Document(filePath.toString(), false);
+			    	Document d = new Document(filePath.toString(), false, false);
 					String[] temp = filePath.toString().split("\\\\");
 			    	System.out.println("Class " + temp[temp.length - 2] + " is classified as: " + bayesBlogs.ApplyMultinomialNaiveBayes(d) + "\n");
 			    }
@@ -165,5 +170,6 @@ public class NaiveBayes {
 			e.printStackTrace();
 		}
 	}
+	*/
 
 }

@@ -13,19 +13,21 @@ public class Document {
 	private String documentClass;
 	private List<String> listContents;
 	
-	public Document(String fileName, boolean isTrainingData) {
+	public Document(String fileName, boolean isTrainingData, boolean isTest) {
 		this.filePath = fileName;
 		this.listContents = new ArrayList<String>();
 		this.contents = "";
-		if (isTrainingData) {
-			String[] temp = fileName.split("\\\\");
-			this.documentClass = temp[temp.length - 2];
-		} else {
-			//TODO voor het interactive learning gedeelte, niet de classifier
-			this.documentClass = "";
-		}
-		this.readFile(filePath);
-		this.updateListContents(contents);
+		if (!isTest) {
+			if (isTrainingData) {
+				String[] temp = fileName.split("\\\\");
+				this.documentClass = temp[temp.length - 2];
+			} else {
+				//TODO voor het interactive learning gedeelte, niet de classifier
+				this.documentClass = "";
+			}
+			this.readFile(filePath);
+			this.updateListContents(contents);
+		} 
 	}
 	
 	public String getContents() {
@@ -38,6 +40,10 @@ public class Document {
 	
 	public List<String> getListContents() {
 		return this.listContents;
+	}
+	
+	public void updateContents(String s) {
+		this.contents = s;
 	}
 	
 	public void updateListContents(String s) {

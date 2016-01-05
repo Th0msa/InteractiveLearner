@@ -26,7 +26,7 @@ public class Corpus {
 		try {
 			Files.walk(Paths.get(path)).forEach(filePath -> {
 			    if (Files.isRegularFile(filePath)) {	
-			        Document tempD = new Document(filePath.toString(), true);
+			        Document tempD = new Document(filePath.toString(), true, false);
 			        this.addCategory(tempD.getDocumentClass());
 			    	allDocuments.add(tempD);
 			    }
