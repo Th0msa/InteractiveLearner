@@ -1,54 +1,25 @@
 package InteractiveLearner.Controller;
 
+import InteractiveLearner.Model.Corpus;
 import InteractiveLearner.View.GUI;
+import InteractiveLearner.View.GUIb;
+import InteractiveLearner.View.TUI;
 
-public class Controller implements Runnable{
-	private Thread thread;
+public class Controller {
 	private NaiveBayes bayes;
-	private boolean running = false;
-	private GUI gui;
+	private GUIb gui;
 	
 	public Controller() {
-		gui = new GUI();
-		this.thread = new Thread(this);
-		thread.start();
+		gui = new GUIb();
+        System.out.println("running");
+        bayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
+	    gui.addNaiveBayes(bayes);
+        System.out.println("training");
+        bayes.TrainMultinomialNaiveBayes();
+        System.out.println("trained");
 	}
-	
-	@Override
-	public void run() {
-		while (running) {
-		}
-		this.stop();
-	}
-	
-	public synchronized void start() {
-        if(!running) {
-            running = true;
-            System.out.println("running");
-            bayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
-            System.out.println("training");
-            bayes.TrainMultinomialNaiveBayes();
-            System.out.println("trained");
-            gui.addnaivebayes(bayes);
-            gui.update();
-            //this.run();
-        }
-    }
-	
-	public synchronized void stop() {
-        if(running) {
-            running = false;
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.exit(1);
-        }
-    }
 	
 	public static void main(String[] args) {
 		Controller controller = new Controller();
-		controller.start();
 	}
 }
