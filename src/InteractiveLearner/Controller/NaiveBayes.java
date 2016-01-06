@@ -1,8 +1,5 @@
 package InteractiveLearner.Controller;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +16,7 @@ public class NaiveBayes {
 	private Map<Tuple<String, String>, Double> condProbPerClassPerWord; //condprob in psuedo
 	private Vocabulary currentVocab; //V in psuedo
 	private Corpus crps;
+	private static final double MINIMALPROB = 0.005; 
 	
 	public NaiveBayes(String corpusFolderPath) {
 		this.crps = new Corpus(corpusFolderPath, true);
@@ -68,7 +66,10 @@ public class NaiveBayes {
 				//store the combination of class and token with conditional probability
 				//TODO kleine en grote kansen eruit halen
 				Tuple<String, String> classTokenCombi = new Tuple<String, String>(category, t);
-				condProbPerClassPerWord.put(classTokenCombi, condProb);
+				
+				//if (condProb < NaiveBayes.MINIMALPROB) {
+					condProbPerClassPerWord.put(classTokenCombi, condProb);
+				//}
 			}
 		}
 	}
