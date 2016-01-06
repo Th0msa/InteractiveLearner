@@ -34,6 +34,10 @@ public class Document {
 		} 
 	}
 	
+	public void updateDClass(String s) {
+		this.documentClass = s;
+	}
+	
 	public String getContents() {
 		return this.contents;
 	}

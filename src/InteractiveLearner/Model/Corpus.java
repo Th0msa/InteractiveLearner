@@ -19,6 +19,7 @@ public class Corpus {
 	private List<Document> allDocuments;
 	private List<String> categories;
 	private Vocabulary vocabulary;
+	private int count = 0;
 	private NaiveBayes naivebayes;
 	
 	public Corpus(String path, boolean isTraining) {
@@ -39,14 +40,22 @@ public class Corpus {
 		}
 	}
 	
-	public void updateDocsinCorpus(String path) {
+	public void putDocument(Document d, String s) {
+		d.updateDClass(s);
+		allDocuments.add(d);
+	}
+	
+	public void updateDocsinCorpus(String path, int noDocs) {
 		try {
 			Files.walk(Paths.get(path)).forEach(filePath -> {
-			    if (Files.isRegularFile(filePath)) {
-			        Document tempD = new Document(filePath.toString(), false, false, naivebayes);
-			        this.addCategory(tempD.getDocumentClass());
-			    	allDocuments.add(tempD);
-			    }
+				if (count < noDocs) {
+				    if (Files.isRegularFile(filePath)) {
+				    	count++;
+				        Document tempD = new Document(filePath.toString(), false, false, naivebayes);
+				        this.addCategory(tempD.getDocumentClass());
+				    	allDocuments.add(tempD);
+				    }
+				}
 			});
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -59,10 +68,6 @@ public class Corpus {
 	
 	public List<Document> getDocuments() {
 		return this.allDocuments;
-	}
-	
-	public void putDocument(Document d) {
-		allDocuments.add(d);
 	}
 	
 	public Vocabulary extractVocabulary() {
