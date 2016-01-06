@@ -9,11 +9,14 @@ import java.nio.file.Paths;
 import javax.swing.*;
 
 import InteractiveLearner.Controller.NaiveBayes;
+import InteractiveLearner.Model.Corpus;
 import InteractiveLearner.Model.Document;
 
 public class GUI {
 	private NaiveBayes naivebayes;
 	private NaiveBayes tempbayes;
+	private Corpus corpus;
+	private Corpus tempcorpus;
 	private boolean isCatScreen = true;
 	private boolean isInitialScreen = true;
 	private final static Dimension SCREEN = Toolkit.getDefaultToolkit().getScreenSize();
@@ -73,21 +76,8 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				//verander corpus naar onze documenten en train ze daarmee...
 				tempbayes = naivebayes;
-				try {
-					Files.walk(Paths.get("../InteractiveLearner/TestFiles/mail")).forEach(filePath -> {
-						if (count < 20) {
-							if (Files.isRegularFile(filePath)) {
-								count++;
-						    	Document d = new Document(filePath.toString(), false, false);
-								String[] temp = filePath.toString().split("\\\\");
-						    	System.out.println("Class " + temp[temp.length - 2] + " is classified as: " + tempbayes.ApplyMultinomialNaiveBayes(d) + "\n");
-						    }
-						}
-					});
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-				count = 0;
+				tempcorpus = corpus;
+				tempbayes.updateTrainer(tempcorpus, "../InteractiveLearner/TestFiles/mail", count+20);
 				isInitialScreen = false;
 				update();
 			}
@@ -105,7 +95,7 @@ public class GUI {
         cbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Document d = new Document(" ", false, true);
+				Document d = new Document(" ", false, true, naivebayes);
 				d.updateContents(textarea.getText());
 				d.updateListContents(d.getContents());
 				isCatScreen = false;
@@ -131,20 +121,27 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//verander corpus naar onze 20 documenten
-				naivebayes.TrainMultinomialNaiveBayes();
+				naivebayes.updateTrainer(corpus, "../InteractiveLearner/TestFiles/mail", count);
+				isCatScreen = true;
+				update();
 			}
         });
         
         nbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				isCatScreen = true;
+				update();
 			}
         });
 	}
 	
-	public void addnaivebayes(NaiveBayes nb) {
+	public void addNaiveBayes(NaiveBayes nb) {
 		this.naivebayes = nb;
+	}
+	
+	public void addCorpus(Corpus crps) {
+		this.corpus = crps;
 	}
 	
 	public static void main(String[] args) {

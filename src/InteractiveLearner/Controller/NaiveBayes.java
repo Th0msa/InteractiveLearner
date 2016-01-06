@@ -21,7 +21,8 @@ public class NaiveBayes {
 	private Corpus crps;
 	
 	public NaiveBayes(String corpusFolderPath) {
-		this.crps = new Corpus(corpusFolderPath);
+		this.crps = new Corpus(corpusFolderPath, true);
+		crps.addNaiveBayes(this);
 		this.categories = this.crps.getCategories();
 		this.priorClassProbabilities = new HashMap<String, Double>();
 		this.condProbPerClassPerWord = new HashMap<Tuple<String, String>, Double>();
@@ -65,10 +66,20 @@ public class NaiveBayes {
 				//calculate conditional probability
 				double condProb = (occurenceCountT + 1) / denominator;
 				//store the combination of class and token with conditional probability
+				//TODO kleine en grote kansen eruit halen
 				Tuple<String, String> classTokenCombi = new Tuple<String, String>(category, t);
 				condProbPerClassPerWord.put(classTokenCombi, condProb);
 			}
 		}
+	}
+	
+	public void updateTrainer(Corpus crps, String path, int noDocs) {
+		crps.updateDocsinCorpus(path, noDocs);
+		this.TrainMultinomialNaiveBayes();
+	}
+	
+	public Corpus getCorpus() {
+		return crps;
 	}
 	
 	/**
@@ -134,42 +145,5 @@ public class NaiveBayes {
 		
 		return maxScoreClass;
 	}
-	
-	public void updateCorpus(Corpus c) {
-		this.crps = c;
-	}
-	
-	/**
-	public static void main(String[] args) {
-		System.out.println("~~~~~~MAIL~~~~~~");
-		NaiveBayes bayesMail = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
-		bayesMail.TrainMultinomialNaiveBayes();
-		try {
-			Files.walk(Paths.get("../InteractiveLearner/TestFiles/mail")).forEach(filePath -> {
-				if (Files.isRegularFile(filePath)) {
-			    	Document d = new Document(filePath.toString(), false, false);
-					String[] temp = filePath.toString().split("\\\\");
-			    	System.out.println("Class " + temp[temp.length - 2] + " is classified as: " + bayesMail.ApplyMultinomialNaiveBayes(d) + "\n");
-			    }
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("~~~~~~BLOGS~~~~~~");
-		NaiveBayes bayesBlogs = new NaiveBayes("../InteractiveLearner/TrainingFiles/blogs");
-		bayesBlogs.TrainMultinomialNaiveBayes();
-		try {
-			Files.walk(Paths.get("../InteractiveLearner/TestFiles/blogs")).forEach(filePath -> {
-				if (Files.isRegularFile(filePath)) {
-			    	Document d = new Document(filePath.toString(), false, false);
-					String[] temp = filePath.toString().split("\\\\");
-			    	System.out.println("Class " + temp[temp.length - 2] + " is classified as: " + bayesBlogs.ApplyMultinomialNaiveBayes(d) + "\n");
-			    }
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	*/
 
 }

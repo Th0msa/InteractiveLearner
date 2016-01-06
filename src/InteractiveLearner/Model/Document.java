@@ -6,27 +6,31 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import InteractiveLearner.Controller.NaiveBayes;
+
 public class Document {
 	private BufferedReader in;
 	private String filePath;
 	private String contents;
 	private String documentClass;
 	private List<String> listContents;
+	private NaiveBayes naivebayes;
 	
-	public Document(String fileName, boolean isTrainingData, boolean isTest) {
+	public Document(String fileName, boolean isTrainingData, boolean isTest, NaiveBayes bayes) {
+		this.naivebayes = bayes;
 		this.filePath = fileName;
 		this.listContents = new ArrayList<String>();
 		this.contents = "";
 		if (!isTest) {
+			this.readFile(filePath);
+			this.updateListContents(contents);
 			if (isTrainingData) {
 				String[] temp = fileName.split("\\\\");
 				this.documentClass = temp[temp.length - 2];
 			} else {
 				//TODO voor het interactive learning gedeelte, niet de classifier
-				this.documentClass = "";
+				this.documentClass = naivebayes.ApplyMultinomialNaiveBayes(this);
 			}
-			this.readFile(filePath);
-			this.updateListContents(contents);
 		} 
 	}
 	

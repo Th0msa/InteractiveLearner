@@ -1,5 +1,6 @@
 package InteractiveLearner.Controller;
 
+import InteractiveLearner.Model.Corpus;
 import InteractiveLearner.View.GUI;
 
 public class Controller implements Runnable{
@@ -29,7 +30,8 @@ public class Controller implements Runnable{
             System.out.println("training");
             bayes.TrainMultinomialNaiveBayes();
             System.out.println("trained");
-            gui.addnaivebayes(bayes);
+            gui.addNaiveBayes(bayes);
+            gui.addCorpus(bayes.getCorpus());
             gui.update();
             //this.run();
         }
