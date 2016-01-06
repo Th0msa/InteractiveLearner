@@ -13,12 +13,14 @@ import InteractiveLearner.Model.Corpus;
 import InteractiveLearner.Model.Document;
 
 public class GUI {
+	private int noSubDirectories = 10;
 	private NaiveBayes naivebayes;
 	private NaiveBayes tempbayes;
 	private Corpus corpus;
 	private Corpus tempcorpus;
 	private boolean isCatScreen = true;
 	private boolean isInitialScreen = true;
+	private boolean isReady = false;
 	private final static Dimension SCREEN = Toolkit.getDefaultToolkit().getScreenSize();
 	private JFrame frame;
 	private Container container;
@@ -30,7 +32,7 @@ public class GUI {
 	private JTextArea textarea;
 	private Font font1;
 	private Font font2;
-	private int count = 0;
+	private int count = 1;
 	
 	public GUI() {
 		font1 = new Font("Arial", Font.BOLD, 16);
@@ -38,46 +40,60 @@ public class GUI {
 		frame = new JFrame();
 		panel = new JPanel();
 		sbutton = new JButton("Start training");
+		sbutton.setVisible(false);
 		cbutton = new JButton("Categorize");
+		cbutton.setVisible(false);
 		ybutton = new JButton("Yes");
+		ybutton.setVisible(false);
 		nbutton = new JButton("No");
+		nbutton.setVisible(false);
 		textarea = new JTextArea();
 	}
 	
 	public void update() { 
-		System.out.println("update");
-		frame.setMinimumSize(new Dimension(400, 400));
-		frame.setLayout(new BorderLayout());
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    container = frame.getContentPane();
-	    textarea.setFont(font2);
-	    if (isInitialScreen) {
-		    initialScreen();
-	    } else {
-	        if (isCatScreen) {
-	        	categorizeScreen();
-	        } else {
-	        	checkScreen();
-	        }
-	    }
-		frame.pack();
-		frame.setLocation(SCREEN.width/2-frame.getSize().width/2, SCREEN.height/2-frame.getSize().height/2);
-		frame.setVisible(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				System.out.println("update " + isCatScreen);
+				frame.setMinimumSize(new Dimension(400, 400));
+				frame.setLayout(new BorderLayout());
+			    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			    container = frame.getContentPane();
+			    textarea.setFont(font2);
+			    panel.add(sbutton);
+			    panel.add(cbutton);
+			    panel.add(ybutton);
+			    panel.add(nbutton);
+			    if (count > noSubDirectories) {
+			    	isReady = true;
+			    	categorizeScreen();
+			    } else if (isInitialScreen) {
+				    initialScreen();
+				    frame.getRootPane().setDefaultButton(sbutton);
+			    } else if (isCatScreen) {
+			        categorizeScreen();
+			    } else {
+			        checkScreen();
+			    }
+				frame.pack();
+				frame.setLocation(SCREEN.width/2-frame.getSize().width/2, SCREEN.height/2-frame.getSize().height/2);
+				frame.setVisible(true);
+			}
+		});
+		
 	}
 	
 	public void initialScreen() {
 		container.removeAll();
-		panel.removeAll();
 		sbutton.setFont(font1);
-		panel.add(sbutton);
+		sbutton.setVisible(true);
 		container.add(panel);
         sbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//verander corpus naar onze documenten en train ze daarmee...
-				tempbayes = naivebayes;
-				tempcorpus = corpus;
-				tempbayes.updateTrainer(tempcorpus, "../InteractiveLearner/TestFiles/mail", count+20);
+				tempbayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail", naivebayes.getPrio(),
+						naivebayes.getCondprob(), naivebayes.getVoc());
+				tempbayes.updateTrainer("../InteractiveLearner/TestFiles/mail/corpus/part" + count);
 				isInitialScreen = false;
 				update();
 			}
@@ -85,17 +101,21 @@ public class GUI {
 	}
 	
 	public void categorizeScreen() {
+		sbutton.setVisible(false);
+		ybutton.setVisible(false);
+		nbutton.setVisible(false);
+		textarea.setText("");
 		textarea.setEditable(true);
 		container.removeAll();
-		panel.removeAll();
         container.add(textarea, BorderLayout.CENTER);
+        textarea.requestFocus();
         cbutton.setFont(font1);
-        panel.add(cbutton);
+        cbutton.setVisible(true);
         container.add(panel, BorderLayout.SOUTH);
         cbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Document d = new Document(" ", false, true, naivebayes);
+				Document d = new Document(" ", false, true, tempbayes);
 				d.updateContents(textarea.getText());
 				d.updateListContents(d.getContents());
 				isCatScreen = false;
@@ -107,21 +127,25 @@ public class GUI {
 	}
 	
 	public void checkScreen() {
+		cbutton.setVisible(false);
 		container.removeAll();
 		textarea.setEditable(false);
-		panel.removeAll();
         container.add(textarea, BorderLayout.CENTER);
         ybutton.setFont(font1);
         nbutton.setFont(font1);
-        panel.add(ybutton);
-        panel.add(nbutton);
+        ybutton.setVisible(true);
+        nbutton.setVisible(true);
         container.add(panel, BorderLayout.SOUTH);
         
         ybutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//verander corpus naar onze 20 documenten
-				naivebayes.updateTrainer(corpus, "../InteractiveLearner/TestFiles/mail", count);
+				naivebayes.updateTrainer("../InteractiveLearner/TestFiles/mail/corpus/part" + count);
+				if (!isReady) {
+					count++;
+					tempbayes.updateTrainer("../InteractiveLearner/TestFiles/mail/corpus/part" + count);
+				}
 				isCatScreen = true;
 				update();
 			}
@@ -130,6 +154,12 @@ public class GUI {
         nbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (!isReady) {
+					//count++;
+					tempbayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail", naivebayes.getPrio(),
+							naivebayes.getCondprob(), naivebayes.getVoc());
+					tempbayes.updateTrainer("../InteractiveLearner/TestFiles/mail/corpus/part" + count);
+				}
 				isCatScreen = true;
 				update();
 			}
@@ -138,10 +168,6 @@ public class GUI {
 	
 	public void addNaiveBayes(NaiveBayes nb) {
 		this.naivebayes = nb;
-	}
-	
-	public void addCorpus(Corpus crps) {
-		this.corpus = crps;
 	}
 	
 	public static void main(String[] args) {

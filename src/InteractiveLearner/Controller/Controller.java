@@ -31,7 +31,6 @@ public class Controller implements Runnable{
             bayes.TrainMultinomialNaiveBayes();
             System.out.println("trained");
             gui.addNaiveBayes(bayes);
-            gui.addCorpus(bayes.getCorpus());
             gui.update();
             //this.run();
         }

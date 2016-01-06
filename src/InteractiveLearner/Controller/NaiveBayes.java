@@ -27,6 +27,16 @@ public class NaiveBayes {
 		this.currentVocab = new Vocabulary();
 	}
 	
+	public NaiveBayes(String corpusFolderPath, Map<String, Double> prio, 
+			Map<Tuple<String, String>, Double> condprob, Vocabulary voc) {
+		this.crps = new Corpus(corpusFolderPath, true);
+		crps.addNaiveBayes(this);
+		this.categories = this.crps.getCategories();
+		this.priorClassProbabilities = prio;
+		this.condProbPerClassPerWord = condprob;
+		this.currentVocab = voc;
+	}
+	
 	/**
 	 * trains the classifier with a corpus of documents and a list of possible categories
 	 */
@@ -74,13 +84,25 @@ public class NaiveBayes {
 		}
 	}
 	
-	public void updateTrainer(Corpus crps, String path, int noDocs) {
-		crps.updateDocsinCorpus(path, noDocs);
+	public void updateTrainer(String path) {
+		this.crps.updateDocsinCorpus(path);
 		this.TrainMultinomialNaiveBayes();
 	}
 	
 	public Corpus getCorpus() {
 		return crps;
+	}
+	
+	public Map<String, Double> getPrio() {
+		return priorClassProbabilities;
+	}
+	
+	public Map<Tuple<String, String>, Double> getCondprob() {
+		return condProbPerClassPerWord;
+	}
+	
+	public Vocabulary getVoc() {
+		return currentVocab;
 	}
 	
 	/**
