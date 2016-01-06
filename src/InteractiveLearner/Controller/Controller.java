@@ -14,12 +14,16 @@ public class Controller {
         System.out.println("running");
         bayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail");
 	    gui.addNaiveBayes(bayes);
+	    gui.addController(this);
+	}
+	
+	public void startTraining() {
         System.out.println("training");
         bayes.TrainMultinomialNaiveBayes();
         System.out.println("trained");
 	}
 	
 	public static void main(String[] args) {
-		Controller controller = new Controller();
+		new Controller();
 	}
 }

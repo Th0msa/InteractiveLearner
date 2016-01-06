@@ -95,12 +95,12 @@ public class NaiveBayes {
 		//for every class...
 		for (String cls : categories) {
 			//retrieve the prior probability for the class 
-			double classScore = this.priorClassProbabilities.get(cls);
-			
+			double classScore = -(Math.log10(this.priorClassProbabilities.get(cls))/Math.log10(2));
+
 			//for every token in the documents vocabulary
 			for (String t : documentVocab) {
-				classScore += this.condProbPerClassPerWord.get(
-						new Tuple<String, String>(cls, t));
+				classScore += -Math.log10(this.condProbPerClassPerWord.get(
+						new Tuple<String, String>(cls, t)))/Math.log10(2);
 			}
 			
 			classTotalScores.put(cls, classScore);

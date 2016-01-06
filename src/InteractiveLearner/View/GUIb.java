@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import InteractiveLearner.Controller.Controller;
 import InteractiveLearner.Controller.NaiveBayes;
 import InteractiveLearner.Model.Document;
 
@@ -28,6 +29,7 @@ public class GUIb {
 	private JTextArea textarea;
 	private Font font1;
 	private Font font2;
+	private Controller controller;
 	
 	public GUIb() {
 		font1 = new Font("Arial", Font.BOLD, 16);
@@ -71,7 +73,7 @@ public class GUIb {
 		frame.setVisible(true);
 		sbutton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				controller.startTraining();
 				sbutton.removeActionListener(this);
 				createInputScreen();
 			}
@@ -133,5 +135,9 @@ public class GUIb {
 				createInputScreen();
 			}
 		});
+	}
+
+	public void addController(Controller controller) {
+		this.controller = controller;
 	}
 }
