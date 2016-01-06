@@ -53,12 +53,12 @@ public class Vocabulary {
 		String[] split = normalized.split("\\s+");
 		for (int i = 0; i < split.length; i++) {
 			//filter on stopwords
-			if (!standardTokens.contains(split[i])) {
+			//if (!standardTokens.contains(split[i])) {
 				//filter on duplicants
 				if (!vocabWords.contains(split[i])) {
 					this.updateVocab(split[i]);
 				}
-			}
+			//}
 		}
 	}
 	

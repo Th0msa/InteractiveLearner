@@ -7,10 +7,17 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
+
+import org.gpl.JSplitButton.JSplitButton;
+import org.gpl.JSplitButton.action.SplitButtonActionListener;
 
 import InteractiveLearner.Controller.Controller;
 import InteractiveLearner.Controller.NaiveBayes;
@@ -25,7 +32,7 @@ public class GUIb {
 	private JButton sbutton;
 	private JButton cbutton;
 	private JButton ybutton;
-	private JButton nbutton;
+	private JSplitButton nbutton;
 	private JTextArea textarea;
 	private Font font1;
 	private Font font2;
@@ -45,7 +52,7 @@ public class GUIb {
 		ybutton = new JButton("Yes");
 		ybutton.setVisible(false);
 		ybutton.setFont(font1);
-		nbutton = new JButton("No");
+		nbutton = new JSplitButton("No");
 		nbutton.setVisible(false);
 		nbutton.setFont(font1);
 		textarea = new JTextArea();
@@ -109,6 +116,19 @@ public class GUIb {
 	}
 	
 	public void createCheckScreen(String cls, Document d) {
+        final JPopupMenu popup = new JPopupMenu();
+        for (int i = 0; i < naivebayes.getCorpus().getCategories().size(); i++) {
+        	String temp = naivebayes.getCorpus().getCategories().get(i);
+	        popup.add(new JMenuItem(new AbstractAction(temp) {
+	            public void actionPerformed(ActionEvent e) {
+	            	naivebayes.getCorpus().putDocument(d, temp);
+					naivebayes.TrainMultinomialNaiveBayes();
+					ybutton.removeActionListener(ybutton.getActionListeners()[0]);
+					createInputScreen();
+	            }
+	        }));
+        }
+        nbutton.setPopupMenu(popup);
 		cbutton.setVisible(false);
 		ybutton.setVisible(true);
 		nbutton.setVisible(true);
@@ -122,17 +142,22 @@ public class GUIb {
 				naivebayes.getCorpus().putDocument(d, cls);
 				naivebayes.TrainMultinomialNaiveBayes();
 				
-				nbutton.removeActionListener(nbutton.getActionListeners()[0]);
 				ybutton.removeActionListener(this);
 				createInputScreen();
 			}
 		});
-		nbutton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-						
+		nbutton.addSplitButtonActionListener(new SplitButtonActionListener() {
+
+			@Override
+			public void buttonClicked(ActionEvent arg0) {
 				ybutton.removeActionListener(ybutton.getActionListeners()[0]);
-				nbutton.removeActionListener(this);
+				nbutton.removeSplitButtonActionListener(this);
 				createInputScreen();
+			}
+
+			@Override
+			public void splitButtonClicked(ActionEvent e) {
+								
 			}
 		});
 	}
