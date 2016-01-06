@@ -33,6 +33,7 @@ public class GUI {
 	private Font font1;
 	private Font font2;
 	private int count = 1;
+	private Document previousSegment;
 	
 	public GUI() {
 		font1 = new Font("Arial", Font.BOLD, 16);
@@ -51,35 +52,29 @@ public class GUI {
 	}
 	
 	public void update() { 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				System.out.println("update " + isCatScreen);
-				frame.setMinimumSize(new Dimension(400, 400));
-				frame.setLayout(new BorderLayout());
-			    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			    container = frame.getContentPane();
-			    textarea.setFont(font2);
-			    panel.add(sbutton);
-			    panel.add(cbutton);
-			    panel.add(ybutton);
-			    panel.add(nbutton);
-			    if (count > noSubDirectories) {
-			    	isReady = true;
-			    	categorizeScreen();
-			    } else if (isInitialScreen) {
-				    initialScreen();
-				    frame.getRootPane().setDefaultButton(sbutton);
-			    } else if (isCatScreen) {
-			        categorizeScreen();
-			    } else {
-			        checkScreen();
-			    }
-				frame.pack();
-				frame.setLocation(SCREEN.width/2-frame.getSize().width/2, SCREEN.height/2-frame.getSize().height/2);
-				frame.setVisible(true);
-			}
-		});
-		
+		System.out.println("update ");
+		frame.setMinimumSize(new Dimension(400, 400));
+		frame.setLayout(new BorderLayout());
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    container = frame.getContentPane();
+	    textarea.setFont(font2);
+	    panel.add(sbutton);
+	    panel.add(cbutton);
+	    panel.add(ybutton);
+	    panel.add(nbutton);
+	    if (count > noSubDirectories) {
+	    	isReady = true;
+	    	categorizeScreen();
+	    } else if (isInitialScreen) {
+		    initialScreen();
+	    } else if (isCatScreen) {
+	        categorizeScreen();
+	    } else {
+	        checkScreen();
+	    }
+		frame.pack();
+		frame.setLocation(SCREEN.width/2-frame.getSize().width/2, SCREEN.height/2-frame.getSize().height/2);
+		frame.setVisible(true);		
 	}
 	
 	public void initialScreen() {
@@ -115,13 +110,16 @@ public class GUI {
         cbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Document d = new Document(" ", false, true, naivebayes);
 				Document d = new Document(" ", false, true, tempbayes);
 				d.updateContents(textarea.getText());
 				d.updateListContents(d.getContents());
-				isCatScreen = false;
-				update();
+				previousSegment = d;
+				//textarea.setText("The text was classified as: " + naivebayes.ApplyMultinomialNaiveBayes(d) + "\n");
 				textarea.setText("The text was classified as: " + tempbayes.ApplyMultinomialNaiveBayes(d) + "\n");
 				//let the learner categorize
+				isCatScreen = false;
+				update();
 			}
         });
 	}
@@ -141,8 +139,9 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//verander corpus naar onze 20 documenten
-				naivebayes.updateTrainer("../InteractiveLearner/TestFiles/mail/corpus/part" + count);
+				naivebayes.getCorpus().putDocument(previousSegment);
 				if (!isReady) {
+					naivebayes.updateTrainer("../InteractiveLearner/TestFiles/mail/corpus/part" + count);
 					count++;
 					tempbayes.updateTrainer("../InteractiveLearner/TestFiles/mail/corpus/part" + count);
 				}
@@ -155,7 +154,7 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!isReady) {
-					//count++;
+					count++;
 					tempbayes = new NaiveBayes("../InteractiveLearner/TrainingFiles/mail", naivebayes.getPrio(),
 							naivebayes.getCondprob(), naivebayes.getVoc());
 					tempbayes.updateTrainer("../InteractiveLearner/TestFiles/mail/corpus/part" + count);
@@ -168,10 +167,5 @@ public class GUI {
 	
 	public void addNaiveBayes(NaiveBayes nb) {
 		this.naivebayes = nb;
-	}
-	
-	public static void main(String[] args) {
-		GUI gui = new GUI();
-		gui.update();
 	}
 }

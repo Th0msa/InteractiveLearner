@@ -20,11 +20,11 @@ public class NaiveBayes {
 	
 	public NaiveBayes(String corpusFolderPath) {
 		this.crps = new Corpus(corpusFolderPath, true);
-		crps.addNaiveBayes(this);
 		this.categories = this.crps.getCategories();
 		this.priorClassProbabilities = new HashMap<String, Double>();
 		this.condProbPerClassPerWord = new HashMap<Tuple<String, String>, Double>();
 		this.currentVocab = new Vocabulary();
+		crps.addNaiveBayes(this);
 	}
 	
 	public NaiveBayes(String corpusFolderPath, Map<String, Double> prio, 
@@ -86,7 +86,6 @@ public class NaiveBayes {
 	
 	public void updateTrainer(String path) {
 		this.crps.updateDocsinCorpus(path);
-		this.TrainMultinomialNaiveBayes();
 	}
 	
 	public Corpus getCorpus() {

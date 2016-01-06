@@ -61,6 +61,10 @@ public class Corpus {
 		return this.allDocuments;
 	}
 	
+	public void putDocument(Document d) {
+		allDocuments.add(d);
+	}
+	
 	public Vocabulary extractVocabulary() {
 		for(Document d : this.getDocuments()) {
 			vocabulary.extractTokensFromDoc(d);
