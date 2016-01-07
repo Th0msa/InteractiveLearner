@@ -99,8 +99,8 @@ public class NaiveBayes {
 
 			//for every token in the documents vocabulary
 			for (String t : documentVocab) {
-				classScore += -Math.log10(this.condProbPerClassPerWord.get(
-						new Tuple<String, String>(cls, t)))/Math.log10(2);
+				classScore += -(Math.log10(this.condProbPerClassPerWord.get(
+						new Tuple<String, String>(cls, t)))/Math.log10(2));
 			}
 			
 			classTotalScores.put(cls, classScore);

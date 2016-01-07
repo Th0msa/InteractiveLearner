@@ -121,9 +121,12 @@ public class GUIb {
         	String temp = naivebayes.getCorpus().getCategories().get(i);
 	        popup.add(new JMenuItem(new AbstractAction(temp) {
 	            public void actionPerformed(ActionEvent e) {
+	            	System.out.println(temp);
 	            	naivebayes.getCorpus().putDocument(d, temp);
 					naivebayes.TrainMultinomialNaiveBayes();
-					ybutton.removeActionListener(ybutton.getActionListeners()[0]);
+					if (ybutton.getActionListeners().length > 0) {
+						ybutton.removeActionListener(ybutton.getActionListeners()[0]);
+					}
 					createInputScreen();
 	            }
 	        }));
@@ -150,14 +153,19 @@ public class GUIb {
 
 			@Override
 			public void buttonClicked(ActionEvent arg0) {
-				ybutton.removeActionListener(ybutton.getActionListeners()[0]);
+				if (ybutton.getActionListeners().length > 0) {
+					ybutton.removeActionListener(ybutton.getActionListeners()[0]);
+				}
 				nbutton.removeSplitButtonActionListener(this);
 				createInputScreen();
 			}
 
 			@Override
 			public void splitButtonClicked(ActionEvent e) {
-								
+				if (ybutton.getActionListeners().length > 0) {
+					ybutton.removeActionListener(ybutton.getActionListeners()[0]);
+				}				
+				nbutton.removeSplitButtonActionListener(this);
 			}
 		});
 	}
