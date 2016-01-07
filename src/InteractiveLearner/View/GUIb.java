@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -29,21 +32,29 @@ public class GUIb {
 	private JFrame frame;
 	private Container container;
 	private JPanel panel;
-	private JButton sbutton;
+	private JSplitButton sbutton;
 	private JButton cbutton;
 	private JButton ybutton;
+	private JButton tbutton;
 	private JSplitButton nbutton;
 	private JTextArea textarea;
 	private Font font1;
 	private Font font2;
 	private Controller controller;
+	private String currentClass;
 	
 	public GUIb() {
+		//test
+		currentClass = "";
+		tbutton = new JButton("Test");
+		tbutton.setVisible(false);
+		tbutton.setFont(new Font("Arial", Font.BOLD, 16));
+		//IL
 		font1 = new Font("Arial", Font.BOLD, 16);
 		font2 = new Font("Arial", Font.PLAIN, 14);
 		frame = new JFrame();
 		panel = new JPanel();
-		sbutton = new JButton("Start training");
+		sbutton = new JSplitButton("Start training");
 		sbutton.setVisible(false);
 		sbutton.setFont(font1);
 		cbutton = new JButton("Categorize");
@@ -65,6 +76,7 @@ public class GUIb {
 	    panel.add(cbutton);
 	    panel.add(ybutton);
 	    panel.add(nbutton);
+	    panel.add(tbutton);
 		frame.setLocation(SCREEN.width/2-frame.getSize().width/2, SCREEN.height/2-frame.getSize().height/2);
 		createHome();
 	}
@@ -73,18 +85,38 @@ public class GUIb {
 		this.naivebayes	= bayes;	
 	}
 	
+	public JTextArea getTextArea() {
+		return textarea;
+	}
+	 
 	public void createHome() {
 		sbutton.setVisible(true);
 		container.add(panel);
 		frame.pack();
 		frame.setVisible(true);
-		sbutton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.startTraining();
-				sbutton.removeActionListener(this);
-				createInputScreen();
-			}
-		});
+		JPopupMenu popupHome = new JPopupMenu();
+		//determine all classes:
+		try {
+			Files.walk(Paths.get("../InteractiveLearner/TrainingFiles/"), 1).forEach(filePath -> {
+				String line = filePath.toString();
+					String betterLine = line.substring(35);
+					String cls = betterLine.replaceAll("\\\\", "");
+					if (!cls.equals("")) {
+						popupHome.add(new JMenuItem(new AbstractAction(cls) {
+				            public void actionPerformed(ActionEvent e) {
+				            	currentClass = cls;
+				            	controller.startTraining("../InteractiveLearner/TrainingFiles/" + cls);
+								createInputScreen();
+				            }
+				        }));
+					}
+				
+			});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		sbutton.setPopupMenu(popupHome);
 	}
 	
 	public void createInputScreen() {
@@ -92,6 +124,7 @@ public class GUIb {
 		ybutton.setVisible(false);
 		nbutton.setVisible(false);
 		cbutton.setVisible(true);
+		tbutton.setVisible(true);
 		textarea.setText("");
 		textarea.setEditable(true);
         container.add(textarea, BorderLayout.CENTER);
@@ -101,9 +134,7 @@ public class GUIb {
 		frame.setVisible(true);
 		cbutton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				Document d = new Document(" ", false, true, naivebayes);
-				System.out.println(naivebayes);
 				d.updateContents(textarea.getText());
 				d.updateListContents(d.getContents());
 				String previousClass = naivebayes.ApplyMultinomialNaiveBayes(d);
@@ -113,13 +144,20 @@ public class GUIb {
 				createCheckScreen(previousClass, d);
 			}
 		});
+		
+		tbutton.addActionListener(new ActionListener() {	
+			public void actionPerformed(ActionEvent e) {
+				controller.testDocument("../InteractiveLearner/TestFiles/" + currentClass, naivebayes);
+				tbutton.removeActionListener(this);	
+			}
+		});
 	}
 	
 	public void createCheckScreen(String cls, Document d) {
-        final JPopupMenu popup = new JPopupMenu();
+		JPopupMenu popupCheck = new JPopupMenu();
         for (int i = 0; i < naivebayes.getCorpus().getCategories().size(); i++) {
         	String temp = naivebayes.getCorpus().getCategories().get(i);
-	        popup.add(new JMenuItem(new AbstractAction(temp) {
+	        popupCheck.add(new JMenuItem(new AbstractAction(temp) {
 	            public void actionPerformed(ActionEvent e) {
 	            	System.out.println(temp);
 	            	naivebayes.getCorpus().putDocument(d, temp);
@@ -131,7 +169,7 @@ public class GUIb {
 	            }
 	        }));
         }
-        nbutton.setPopupMenu(popup);
+        nbutton.setPopupMenu(popupCheck);
 		cbutton.setVisible(false);
 		ybutton.setVisible(true);
 		nbutton.setVisible(true);
