@@ -13,7 +13,7 @@ public class Controller {
 	private NaiveBayes bayes;
 	private GUIb gui;
 	
-	public Controller(String trainingFilePath) {
+	public Controller() {
 		gui = new GUIb();
         System.out.println("running");
 	    gui.addController(this);
@@ -28,6 +28,7 @@ public class Controller {
 	}
 	
 	public void testDocument(String testFilePath, NaiveBayes bayes) {
+		System.out.println("test");
 		try {
 			List<String> results = new ArrayList<String>();
 			Files.walk(Paths.get(testFilePath)).forEach(filePath -> {
@@ -53,7 +54,6 @@ public class Controller {
 	}
 	
 	public static void main(String[] args) {
-		//Controller mailController = new Controller("../InteractiveLearner/TrainingFiles/mail");
-		Controller blogsController = new Controller("../InteractiveLearner/TrainingFiles/blogs");
+		new Controller();
 	}
 }
