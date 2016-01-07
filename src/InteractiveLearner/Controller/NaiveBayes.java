@@ -99,14 +99,13 @@ public class NaiveBayes {
 
 			//for every token in the documents vocabulary
 			for (String t : documentVocab) {
-				classScore += -Math.log10(this.condProbPerClassPerWord.get(
-						new Tuple<String, String>(cls, t)))/Math.log10(2);
+				classScore += -(Math.log10(this.condProbPerClassPerWord.get(
+						new Tuple<String, String>(cls, t)))/Math.log10(2));
 			}
 			
 			classTotalScores.put(cls, classScore);
 		}
 		possibleClass = this.calculateMaxScore(classTotalScores);
-		System.out.println(classTotalScores + " " + crps.countDocsInClass("ham"));
 		return possibleClass;
 	}
 	
@@ -134,16 +133,21 @@ public class NaiveBayes {
 	 * @return the class with the highest score
 	 */
 	private String calculateMaxScore(Map<String, Double> scoreMap) {
-		String maxScoreClass = "";
-		double currentMax = 0;
+		String bestClass = "";
+		double current = 0;
 		for (String cls : scoreMap.keySet()) {
-			if (scoreMap.get(cls) > currentMax) {
-				currentMax = scoreMap.get(cls);
-				maxScoreClass = cls;
+			if (current == 0) {
+				current = scoreMap.get(cls);
+				bestClass = cls;
+			} else {
+				if(scoreMap.get(cls) < current) {
+					current = scoreMap.get(cls);
+					bestClass = cls;
+				}	
 			}
 		}
 		
-		return maxScoreClass;
+		return bestClass;
 	}
 
 }
